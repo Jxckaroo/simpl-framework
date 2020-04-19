@@ -1,0 +1,27 @@
+{
+    "name": "jxckaroo/simpl",
+    "description": "A very basic ORM for any project.",
+    "keywords": ["template", "composer", "package"],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Jack Mollart",
+            "email": "jackmollart96@gmail.com"
+        }
+    ],
+    "type": "project",
+    "require": {
+		"php": ">=7.1",
+        "ext-pdo": "*",
+        "filp/whoops": "^2.7",
+        "twig/twig": "^3.0"
+    },
+    "require-dev": {
+		"phpunit/phpunit": "6.*"
+    },
+    "autoload": {
+        "psr-4": {
+            "Jxckaroo\\Simpl\\": "src/"
+        }
+    }
+}

@@ -10,8 +10,7 @@ use Jxckaroo\Simpl\Router\RouteParams;
 class Controller implements ControllerInterface
 {
     /**
-     * Used to get parameters from chosen route
-     * @var RouteParams
+     * @var RouteParams $route_params
      */
     protected $route_params;
 

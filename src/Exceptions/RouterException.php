@@ -1,8 +1,8 @@
 <?php namespace Jxckaroo\Simpl\Exceptions;
 
 /**
- * Class SimplORMException
+ * Class RouterException
  * @package Jxckaroo\Simpl\Exceptions
  */
-class SimplORMException extends SimplException
+class RouterException extends SimplException
 {}

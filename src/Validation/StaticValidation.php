@@ -3,12 +3,13 @@
 use Jxckaroo\Simpl\Interfaces\StaticValidationInterface;
 
 /**
- * Class MagicMethods
- * @package Jxckaroo\Simpl\Extra
+ * Class StaticValidation
+ * @package Jxckaroo\Simpl\Validation
  */
 class StaticValidation implements StaticValidationInterface
 {
     /**
+     * Run validation on the ORM find command
      * @param $arguments
      * @return bool
      */

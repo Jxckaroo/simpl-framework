@@ -27,26 +27,40 @@ class Orm implements OrmInterface
         ARRAY_LOAD = 2,
         NEW_LOAD = 3,
         EMPTY_LOAD = 4;
+
     /**
      * @var \PDO $db
-     *
      * Active database connection
      */
-    protected static
-        $db,
-        $staticValidation;
+    protected static $db;
 
+    /**
+     * @var bool $ignoreKeyOnUpdate
+     * @var bool $ignoreKeyOnInsert
+     */
     protected
         $parentObject,
         $ignoreKeyOnUpdate = true,
         $ignoreKeyOnInsert = true;
 
+    /**
+     * @var int $loaderMethod
+     * @var mixed $dataLoaded
+     * @var bool $newLoad
+     * @var array $modifiedFields
+     */
     private
         $loaderMethod,
         $dataLoaded,
         $newLoad = false,
         $modifiedFields = [];
 
+    /**
+     * Orm constructor.
+     * @param null $data
+     * @param int $loaderMethod
+     * @throws \Exception
+     */
     public function __construct($data = null, $loaderMethod = self::EMPTY_LOAD)
     {
         // Store data passed in raw format
@@ -78,7 +92,6 @@ class Orm implements OrmInterface
 
     /**
      * Load active class by Primary Key
-     *
      * @access private
      * @return void
      */
@@ -90,7 +103,6 @@ class Orm implements OrmInterface
 
     /**
      * Get the primayry key field name for the active class.
-     *
      * @access public
      * @static
      * @return string
@@ -103,7 +115,6 @@ class Orm implements OrmInterface
 
     /**
      * Return a record from the database based on the primary key.
-     *
      * @access private
      * @throws \Exception
      * @return void
@@ -136,7 +147,6 @@ class Orm implements OrmInterface
 
     /**
      * Get the active class table name
-     *
      * @access private
      * @return mixed
      */
@@ -148,7 +158,6 @@ class Orm implements OrmInterface
 
     /**
      * Return the primary key from the loaded data
-     *
      * @access private
      * @return mixed
      */
@@ -157,6 +166,10 @@ class Orm implements OrmInterface
         return $this->{self::getPrimaryKey()};
     }
 
+    /**
+     * Run the database output filters.
+     * @throws \ReflectionException
+     */
     private function databaseOutputFilters()
     {
         $reflector = new ReflectionClass(get_class($this));
@@ -166,6 +179,10 @@ class Orm implements OrmInterface
                 $this->{$method->name}();
     }
 
+    /**
+     * Attempt to load a data array in to our object
+     * @throws \ReflectionException
+     */
     private function loadArray()
     {
         // Set the object properties
@@ -178,6 +195,10 @@ class Orm implements OrmInterface
         $this->databaseOutputFilters();
     }
 
+    /**
+     * Insert statement for a new record
+     * @throws \Exception
+     */
     private function insert()
     {
         $array = $this->get();
@@ -253,6 +274,10 @@ class Orm implements OrmInterface
         $this->postInsert();
     }
 
+    /**
+     * Update statement for an existing record
+     * @throws \Exception
+     */
     public function update()
     {
         if ($this->isNewLoad())
@@ -315,6 +340,10 @@ class Orm implements OrmInterface
 
     }
 
+    /**
+     * Delete statement for an existing record
+     * @throws SimplORMException
+     */
     public function delete()
     {
         if ($this->isNewLoad())
@@ -342,7 +371,6 @@ class Orm implements OrmInterface
 
     /**
      * Get current object to array or return specific field value.
-     *
      * @param bool $field
      * @return array
      */
@@ -358,7 +386,6 @@ class Orm implements OrmInterface
 
     /**
      * Convert an object to an array.
-     *
      * @access public
      * @static
      * @param object $object
@@ -390,6 +417,12 @@ class Orm implements OrmInterface
     public function preInsert()
     {}
 
+    /**
+     * Run the database input filters
+     * @param $array
+     * @return mixed
+     * @throws \ReflectionException
+     */
     private function databaseInputFilters($array)
     {
         $reflector = new ReflectionClass(get_class($this));
@@ -403,7 +436,6 @@ class Orm implements OrmInterface
 
     /**
      * Fetch column names of active table
-     *
      * @access public
      * @return array
      */
@@ -428,7 +460,6 @@ class Orm implements OrmInterface
     
     /**
      * Return the correct bindParam value
-     *
      * @acces private
      * @param $value
      * @return int
@@ -453,7 +484,6 @@ class Orm implements OrmInterface
 
     /**
      * Create an empty object instance
-     *
      * @access private
      */
     private function loadEmpty()
@@ -466,6 +496,10 @@ class Orm implements OrmInterface
         $this->newLoad = true;
     }
 
+    /**
+     * Use a specific connection
+     * @param $pdo
+     */
     public function useConnection($pdo)
     {
         if ($pdo instanceof \PDO)
@@ -476,7 +510,6 @@ class Orm implements OrmInterface
 
     /**
      * Set the active database connection
-     *
      * @access public
      * @param \PDO $pdo
      */
@@ -485,6 +518,10 @@ class Orm implements OrmInterface
         self::$db = $pdo;
     }
 
+    /**
+     * Attempt to save our object
+     * @throws \Exception
+     */
     public function save()
     {
         if ($this->isNewLoad())
@@ -496,11 +533,22 @@ class Orm implements OrmInterface
         }
     }
 
+    /**
+     * Check if the object is new or existing
+     * @return bool
+     */
     public function isNewLoad()
     {
         return $this->newLoad;
     }
 
+    /**
+     * Attempt to run any static called methods
+     * @param $name
+     * @param array $arguments
+     * @return mixed
+     * @throws \Exception
+     */
     public static function __callStatic($name, $arguments = [])
     {
         $validation_method = lcfirst(ucwords($name)). "Validation";
@@ -525,7 +573,9 @@ class Orm implements OrmInterface
         return new $class();
     }
 
+    /**
+     * The is a function that can be run from extending models.
+     */
     public function initialise()
-    {
-    }
+    {}
 }

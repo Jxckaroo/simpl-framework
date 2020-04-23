@@ -1,7 +1,19 @@
 {
-    "name": "jxckaroo/simpl",
-    "description": "A very basic ORM for any project.",
-    "keywords": ["template", "composer", "package"],
+    "name": "jxckaroo/simpl-framework",
+    "description": "A very basic framework for simple projects.",
+    "keywords": [
+        "framework",
+        "mvc",
+        "rapid-development",
+        "conventions over configuration",
+        "dry",
+        "orm",
+        "form",
+        "validation",
+        "psr-7",
+        "simple",
+        "simpl"
+    ],
     "license": "MIT",
     "authors": [
         {
@@ -14,7 +26,9 @@
 		"php": ">=7.1",
         "ext-pdo": "*",
         "filp/whoops": "^2.7",
-        "twig/twig": "^3.0"
+        "twig/twig": "^3.0",
+        "splitbrain/php-cli": "^1.1",
+        "symfony/http-foundation": "^5.0"
     },
     "require-dev": {
 		"phpunit/phpunit": "6.*"

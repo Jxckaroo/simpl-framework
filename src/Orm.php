@@ -1,5 +1,6 @@
 <?php namespace Jxckaroo\Simpl;
 
+use Jxckaroo\Simpl\Exceptions\SimplException;
 use Jxckaroo\Simpl\Exceptions\SimplORMException;
 use Jxckaroo\Simpl\Interfaces\OrmInterface;
 use Jxckaroo\Simpl\Validation\StaticValidation;
@@ -59,7 +60,7 @@ class Orm implements OrmInterface
      * Orm constructor.
      * @param null $data
      * @param int $loaderMethod
-     * @throws \Exception
+     * @throws \ReflectionException
      */
     public function __construct($data = null, $loaderMethod = self::EMPTY_LOAD)
     {
@@ -116,7 +117,7 @@ class Orm implements OrmInterface
     /**
      * Return a record from the database based on the primary key.
      * @access private
-     * @throws \Exception
+     * @throws SimplORMException
      * @return void
      */
     private function loadFromDatabase()
@@ -132,7 +133,7 @@ class Orm implements OrmInterface
 
         if ($results->rowCount() < 1)
         {
-            throw new \Exception(sprintf("%s record not found in database. (PK: %s)", get_called_class(), $this->id()), 2);
+            throw new SimplORMException(sprintf("%s record not found in database. (PK: %s)", get_called_class(), $this->id()), 2);
         }
 
         $record = $results->fetch();
@@ -197,7 +198,7 @@ class Orm implements OrmInterface
 
     /**
      * Insert statement for a new record
-     * @throws \Exception
+     * @throws SimplORMException
      */
     private function insert()
     {
@@ -256,7 +257,7 @@ class Orm implements OrmInterface
         // Error checking
         if (!$insert)
         {
-            throw new \Exception("Error inserting in to [" . self::getTableName() . "]" . "\n\n" . $sql);
+            throw new SimplORMException("Error inserting in to [" . self::getTableName() . "]" . "\n\n" . $sql);
         }
 
         // Set our primary key if it exists
@@ -276,12 +277,12 @@ class Orm implements OrmInterface
 
     /**
      * Update statement for an existing record
-     * @throws \Exception
+     * @throws SimplORMException
      */
     public function update()
     {
         if ($this->isNewLoad())
-            throw new \Exception('Unable to update "new" object. Object must be saved first.');
+            throw new SimplORMException('Unable to update "new" object. Object must be saved first.');
 
         $primaryKey = self::getPrimaryKey();
         $id = $this->id();
@@ -333,7 +334,7 @@ class Orm implements OrmInterface
         // Error checking
         if (!$update)
         {
-            throw new \Exception("Error updating record in [" . self::getTableName() . "]" . "\n\n" . $sql);
+            throw new SimplORMException("Error updating record in [" . self::getTableName() . "]" . "\n\n" . $sql);
         }
 
         $this->modifiedfields = array();
@@ -348,7 +349,7 @@ class Orm implements OrmInterface
     {
         if ($this->isNewLoad())
         {
-            throw new \Exception('Unable to delete object, record is new (and therefore doesn\'t exist in the database).');
+            throw new SimplORMException('Unable to delete object, record is new (and therefore doesn\'t exist in the database).');
         }
 
         $sql = sprintf(
@@ -519,8 +520,8 @@ class Orm implements OrmInterface
     }
 
     /**
-     * Attempt to save our object
-     * @throws \Exception
+     * Attempt to save our object.
+     * @throws SimplORMException
      */
     public function save()
     {
@@ -547,14 +548,14 @@ class Orm implements OrmInterface
      * @param $name
      * @param array $arguments
      * @return mixed
-     * @throws \Exception
+     * @throws SimplORMException
      */
     public static function __callStatic($name, $arguments = [])
     {
         $validation_method = lcfirst(ucwords($name)). "Validation";
 
         if (!method_exists(StaticValidation::class, $validation_method))
-            throw new \Exception("Call to unknown static method [" . lcfirst(ucwords($name)) . "].", 500);
+            throw new SimplORMException("Call to unknown static method [" . lcfirst(ucwords($name)) . "].", 500);
 
         $validation = StaticValidation::$validation_method($arguments);
         $class = get_called_class();

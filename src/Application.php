@@ -13,9 +13,25 @@ use Whoops;
  */
 class Application implements ApplicationInterface
 {
+    /**
+     * @var Configuration $configuration
+     */
     protected $configuration;
+
+    /**
+     * @var Router\Router $router
+     */
     public $router;
+
+    /**
+     * The path for the application namespace
+     * @var mixed $namespace
+     */
     public $namespace;
+
+    /**
+     * @var Whoops\Run $whoops
+     */
     public $whoops;
 
     /**

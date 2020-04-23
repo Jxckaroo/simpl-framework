@@ -80,7 +80,6 @@ class Router implements RouterInterface
 
     /**
      * Get the currently matched parameters
-     *
      * @return array
      */
     public function getParams()

@@ -2,6 +2,7 @@
 
 use Jxckaroo\Simpl\Interfaces\ControllerInterface;
 use Jxckaroo\Simpl\Router\RouteParams;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Class Controller
@@ -10,10 +11,14 @@ use Jxckaroo\Simpl\Router\RouteParams;
 class Controller implements ControllerInterface
 {
     /**
-     * Used to get parameters from chosen route
-     * @var RouteParams
+     * @var RouteParams $route_params
      */
     protected $route_params;
+
+    /**
+     * @var Request $request
+     */
+    protected $request;
 
     /**
      * Controller constructor.
@@ -22,5 +27,6 @@ class Controller implements ControllerInterface
     public function __construct(RouteParams $route_params)
     {
         $this->route_params = $route_params;
+        $this->request = Request::createFromGlobals();
     }
 }

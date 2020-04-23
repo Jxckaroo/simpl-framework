@@ -1,11 +1,18 @@
-<?php
+<?php namespace Jxckaroo\Simpl\Router;
 
+use Jxckaroo\Simpl\Exceptions\RouterException;
 
-namespace Jxckaroo\Simpl\Router;
-
-
+/**
+ * Class Route
+ * @package Jxckaroo\Simpl\Router
+ */
 class Route extends Router
 {
+    /**
+     * Load a new route in to the application
+     * @param $route
+     * @param array $params
+     */
     public static function add($route, $params = [])
     {
         // Convert the route to a regular expression: escape forward slashes
@@ -23,9 +30,21 @@ class Route extends Router
         self::$routes[$route] = $params;
     }
 
+    /**
+     * Add a group with an option prefix
+     * @param $prefix
+     * @param $callback
+     * @throws RouterException
+     */
     public static function group($prefix, $callback)
     {
         self::$prefix = $prefix . '/';
+
+        if (!is_callable($callback))
+        {
+            throw new RouterException("Second parameter to group, must be callable.", 200);
+        }
+
         $callback();
     }
 }
